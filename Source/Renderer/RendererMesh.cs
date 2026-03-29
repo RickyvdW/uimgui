@@ -213,7 +213,7 @@ namespace UImGui.Renderer
 							prevTextureId = drawCmd.TexRef._TexID;
 
 							// TODO: Implement ImDrawCmdPtr.GetTexID().
-							bool hasTexture = _textureManager.TryGetTexture(prevTextureId, out UnityEngine.Texture texture);
+							bool hasTexture = _textureManager.TryGetTexture(prevTextureId, out UnityEngine.Texture2D texture);
 							Assert.IsTrue(hasTexture, $"Texture {prevTextureId} does not exist. Try to use UImGuiUtility.GetTextureID().");
 
 							_materialProperties.SetTexture(_textureID, texture);

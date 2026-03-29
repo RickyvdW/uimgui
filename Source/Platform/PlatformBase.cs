@@ -1,6 +1,7 @@
 ﻿using ImGuiNET;
 using System;
 using UImGui.Assets;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -75,6 +76,14 @@ namespace UImGui.Platform
 			io.DisplaySize = displayRect.size; // TODO: dpi aware, scale, etc.
 
 			io.DeltaTime = Time.unscaledDeltaTime;
+			
+			// RICKY: Needed otherwise ImGui flips its shit when you open the frame debugger.
+			#if UNITY_EDITOR
+			if (EditorApplication.isPaused)
+			{
+				io.DeltaTime = 0.01f;
+			}
+			#endif 
 
 			if (_iniSettings != null && io.WantSaveIniSettings)
 			{

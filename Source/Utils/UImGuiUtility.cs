@@ -8,7 +8,7 @@ namespace UImGui
 {
 	public static class UImGuiUtility
 	{
-		public static IntPtr GetTextureId(UTexture texture) => Context?.TextureManager.GetTextureId(texture) ?? IntPtr.Zero;
+		// public static IntPtr GetTextureId(UTexture texture) => Context?.TextureManager.GetTextureId(texture.GetNativeTexturePtr()) ?? IntPtr.Zero;
 		internal static SpriteInfo GetSpriteInfo(Sprite sprite) => Context?.TextureManager.GetSpriteInfo(sprite) ?? null;
 
 		internal static Context Context;

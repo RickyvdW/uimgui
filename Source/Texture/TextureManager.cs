@@ -16,10 +16,10 @@ namespace UImGui.Texture
 	{
 		private Texture2D _atlasTexture;
 
-		private readonly Dictionary<IntPtr, UTexture> _textures = new Dictionary<IntPtr, UTexture>();
-		private readonly Dictionary<UTexture, IntPtr> _textureIds = new Dictionary<UTexture, IntPtr>();
+		private readonly Dictionary<IntPtr, Texture2D> _textures = new Dictionary<IntPtr, Texture2D>();
+		private readonly Dictionary<Texture2D, IntPtr> _textureIds = new Dictionary<Texture2D, IntPtr>();
+		
 		private readonly Dictionary<Sprite, SpriteInfo> _spriteData = new Dictionary<Sprite, SpriteInfo>();
-		private readonly Dictionary<IntPtr, Texture2D> _texture2D = new Dictionary<IntPtr, Texture2D>();
 		
 		private readonly HashSet<IntPtr> _allocatedGlyphRangeArrays = new HashSet<IntPtr>();
 
@@ -57,7 +57,6 @@ namespace UImGui.Texture
 			_textures.Clear();
 			_textureIds.Clear();
 			_spriteData.Clear();
-			_texture2D.Clear();
 
 			if (_atlasTexture != null)
 			{
@@ -72,12 +71,12 @@ namespace UImGui.Texture
 			// io.Fonts.SetTexID(id);
 		}
 
-		public bool TryGetTexture(IntPtr id, out UTexture texture)
+		public bool TryGetTexture(IntPtr id, out Texture2D texture)
 		{
 			return _textures.TryGetValue(id, out texture);
 		}
 
-		public IntPtr GetTextureId(UTexture texture)
+		public IntPtr GetTextureId(Texture2D texture)
 		{
 			return _textureIds.TryGetValue(texture, out IntPtr id) ? id : RegisterTexture(texture);
 		}
@@ -98,9 +97,10 @@ namespace UImGui.Texture
 			return spriteInfo;
 		}
 
-		private IntPtr RegisterTexture(UTexture texture)
+		private IntPtr RegisterTexture(Texture2D texture)
 		{
 			IntPtr id = texture.GetNativeTexturePtr();
+			
 			_textures[id] = texture;
 			_textureIds[texture] = id;
 
@@ -226,30 +226,51 @@ namespace UImGui.Texture
 				{
 					filterMode = FilterMode.Point
 				};
+				
+				// Memcpy.
+				unsafe
+				{
+					NativeArray<byte> buffer = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(tex.GetPixels().ToPointer(), tex.GetPitch() * tex.Height, Allocator.None);
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+					NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref buffer, AtomicSafetyHandle.GetTempMemoryHandle());
+#endif
+					unityTexture.SetPixelData(buffer, 0);
+				}
+				
+				unityTexture.Apply();
 				tex.SetTexID(unityTexture.GetNativeTexturePtr());
 				tex.SetStatus(ImTextureStatus.OK);
-				_texture2D.Add(tex.TexID, unityTexture);
+				
+				RegisterTexture(unityTexture);
 			}
 			else if (tex.Status == ImTextureStatus.WantUpdates)
 			{
-				Texture2D unityTexture = _texture2D[tex.TexID];
+				Texture2D unityTexture = _textures[tex.TexID];
 				var updateRect = tex.UpdateRect;
-				
-				// RICKY: Figure out this update abracadabra from an IntPtr.
-				// unityTexture.SetPixelData(tex.GetPixels(), 0);
-				
+
+				// Memcpy.
+				unsafe
+				{
+					NativeArray<byte> buffer = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<byte>(tex.GetPixels().ToPointer(), tex.GetPitch() * tex.Height, Allocator.None);
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+					NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref buffer, AtomicSafetyHandle.GetTempMemoryHandle());
+#endif
+					unityTexture.SetPixelData(buffer, 0);
+				}
+
 				unityTexture.Apply();
 				tex.Status = ImTextureStatus.OK;
 			}
 			else if (tex.Status == ImTextureStatus.WantDestroy)
 			{
-				Texture2D unityTexture = _texture2D[tex.TexID];
+				Texture2D unityTexture = _textures[tex.TexID];
 
 				if (unityTexture != null)
 				{
+					_textures.Remove(tex.TexID);
+					_textureIds.Remove(unityTexture);
 					UnityEngine.Object.Destroy(unityTexture);
 					unityTexture = null;
-					_texture2D.Remove(tex.TexID);
 				}
 				
 				tex.SetTexID(IntPtr.Zero);
