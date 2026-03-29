@@ -19,7 +19,8 @@ namespace UImGui.Texture
 		private readonly Dictionary<IntPtr, UTexture> _textures = new Dictionary<IntPtr, UTexture>();
 		private readonly Dictionary<UTexture, IntPtr> _textureIds = new Dictionary<UTexture, IntPtr>();
 		private readonly Dictionary<Sprite, SpriteInfo> _spriteData = new Dictionary<Sprite, SpriteInfo>();
-
+		private readonly Dictionary<IntPtr, Texture2D> _texture2D = new Dictionary<IntPtr, Texture2D>();
+		
 		private readonly HashSet<IntPtr> _allocatedGlyphRangeArrays = new HashSet<IntPtr>();
 
 		public unsafe void Initialize(ImGuiIOPtr io)
@@ -56,6 +57,7 @@ namespace UImGui.Texture
 			_textures.Clear();
 			_textureIds.Clear();
 			_spriteData.Clear();
+			_texture2D.Clear();
 
 			if (_atlasTexture != null)
 			{
@@ -201,6 +203,58 @@ namespace UImGui.Texture
 			}
 
 			_allocatedGlyphRangeArrays.Clear();
+		}
+
+		public void UpdateTextures(ImDrawDataPtr drawData)
+		{
+			if (drawData.Textures.Data == IntPtr.Zero)
+				return;
+
+			for (int i = 0; i < drawData.Textures.Size; i++)
+			{
+				ImTextureDataPtr tex = drawData.Textures[i];
+				if (tex.Status != ImTextureStatus.OK)
+					UpdateTexture(tex);
+			}
+		}
+
+		private void UpdateTexture(ImTextureDataPtr tex)
+		{
+			if (tex.Status == ImTextureStatus.WantCreate)
+			{
+				Texture2D unityTexture = new Texture2D(tex.Width, tex.Height, TextureFormat.RGBA32, false, false)
+				{
+					filterMode = FilterMode.Point
+				};
+				tex.SetTexID(unityTexture.GetNativeTexturePtr());
+				tex.SetStatus(ImTextureStatus.OK);
+				_texture2D.Add(tex.TexID, unityTexture);
+			}
+			else if (tex.Status == ImTextureStatus.WantUpdates)
+			{
+				Texture2D unityTexture = _texture2D[tex.TexID];
+				var updateRect = tex.UpdateRect;
+				
+				// RICKY: Figure out this update abracadabra from an IntPtr.
+				// unityTexture.SetPixelData(tex.GetPixels(), 0);
+				
+				unityTexture.Apply();
+				tex.Status = ImTextureStatus.OK;
+			}
+			else if (tex.Status == ImTextureStatus.WantDestroy)
+			{
+				Texture2D unityTexture = _texture2D[tex.TexID];
+
+				if (unityTexture != null)
+				{
+					UnityEngine.Object.Destroy(unityTexture);
+					unityTexture = null;
+					_texture2D.Remove(tex.TexID);
+				}
+				
+				tex.SetTexID(IntPtr.Zero);
+				tex.Status = ImTextureStatus.Destroyed;
+			}
 		}
 	}
 }

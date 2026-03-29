@@ -70,7 +70,7 @@ namespace UImGui.Platform
 
 		public virtual void PrepareFrame(ImGuiIOPtr io, Rect displayRect)
 		{
-			Assert.IsTrue(io.Fonts.TexIsBuilt, "Font atlas not built! Generally built by the renderer. Missing call to renderer NewFrame() function?");
+			// Assert.IsTrue(io.Fonts.TexIsBuilt, "Font atlas not built! Generally built by the renderer. Missing call to renderer NewFrame() function?");
 
 			io.DisplaySize = displayRect.size; // TODO: dpi aware, scale, etc.
 

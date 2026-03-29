@@ -51,9 +51,13 @@ namespace UImGui.Renderer
 		public void Initialize(ImGuiIOPtr io)
 		{
 			io.SetBackendRendererName("Unity Mesh");
+			
 			// Supports ImDrawCmd::VtxOffset to output large meshes while still using 16-bits indices.
 			io.BackendFlags |= ImGuiBackendFlags.RendererHasVtxOffset;
-
+			
+			// Supports dynamic font atlas.
+			io.BackendFlags |= ImGuiBackendFlags.RendererHasTextures;
+			
 			_material = new Material(_shader)
 			{
 				hideFlags = HideFlags.HideAndDontSave & ~HideFlags.DontUnloadUnusedAsset

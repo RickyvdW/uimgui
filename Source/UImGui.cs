@@ -248,6 +248,7 @@ namespace UImGui
 
 			Constants.PrepareFrameMarker.Begin(this);
 			_context.TextureManager.PrepareFrame(io);
+			
 			_platform.PrepareFrame(io, _camera.pixelRect);
 			ImGui.NewFrame();
 #if !UIMGUI_REMOVE_IMGUIZMO
@@ -270,10 +271,13 @@ namespace UImGui
 				ImGui.Render();
 				Constants.LayoutMarker.End();
 			}
-
+			
 			Constants.DrawListMarker.Begin(this);
 			_renderCommandBuffer.Clear();
-			_renderer.RenderDrawLists(buffer, ImGui.GetDrawData());
+
+			var drawData = ImGui.GetDrawData();
+			_context.TextureManager.UpdateTextures(drawData);
+			_renderer.RenderDrawLists(buffer, drawData);
 			Constants.DrawListMarker.End();
 
 			if (_isChangingCamera)
