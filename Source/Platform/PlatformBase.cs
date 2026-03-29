@@ -28,8 +28,8 @@ namespace UImGui.Platform
 		{
 			io.SetBackendPlatformName("Unity Input System");
 			io.BackendFlags |= ImGuiBackendFlags.HasMouseCursors;
-
-			if ((config.ImGuiConfig & ImGuiConfigFlags.NavEnableSetMousePos) != 0)
+			
+			if (io.ConfigNavMoveSetMousePos)
 			{
 				io.BackendFlags |= ImGuiBackendFlags.HasSetMousePos;
 				io.WantSetMousePos = true;
@@ -46,7 +46,18 @@ namespace UImGui.Platform
 			}
 
 			_callbacks.Assign(io);
-			io.ClipboardUserData = IntPtr.Zero;
+			
+			/*
+			 RICKY:
+			 * - IO: moved clipboard functions from ImGuiIO to ImGuiPlatformIO:
+			    - io.GetClipboardTextFn         -> platform_io.Platform_GetClipboardTextFn
+			    - io.SetClipboardTextFn         -> platform_io.Platform_SetClipboardTextFn
+			    - in function signatures, changed 'void* user_data' to 'ImGuiContext* ctx' for consistency
+			      with other functions. Pull your user data from platform_io.ClipboardUserData if used.
+			    - as this is will affect all users of custom engines/backends, we are providing proper
+			      legacy redirection (will obsolete).
+			 */
+			// io.ClipboardUserData = IntPtr.Zero;
 
 			if (_iniSettings != null)
 			{
@@ -59,7 +70,7 @@ namespace UImGui.Platform
 
 		public virtual void PrepareFrame(ImGuiIOPtr io, Rect displayRect)
 		{
-			Assert.IsTrue(io.Fonts.IsBuilt(), "Font atlas not built! Generally built by the renderer. Missing call to renderer NewFrame() function?");
+			Assert.IsTrue(io.Fonts.TexIsBuilt, "Font atlas not built! Generally built by the renderer. Missing call to renderer NewFrame() function?");
 
 			io.DisplaySize = displayRect.size; // TODO: dpi aware, scale, etc.
 

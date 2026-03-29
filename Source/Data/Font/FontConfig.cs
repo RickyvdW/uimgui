@@ -11,7 +11,7 @@ namespace UImGui
 		public bool FontDataOwnedByAtlas;
 
 		[Tooltip("Index of font within TTF/OTF file. (default=0)")]
-		public int FontNo;
+		public uint FontNo;
 
 		[Tooltip("Size in pixels for rasterizer (more or less maps to the resulting font height).")]
 		public float SizeInPixels;
@@ -30,8 +30,8 @@ namespace UImGui
 			"If enabled, you can set OversampleH/V to 1.")]
 		public bool PixelSnapH;
 
-		[Tooltip("Extra spacing (in pixels) between glyphs. Only X axis is supported for now. (default=0, 0)")]
-		public Vector2 GlyphExtraSpacing;
+		[Tooltip("Extra spacing (in pixels) between glyphs. Only X axis is supported for now. (default=0)")]
+		public float GlyphExtraAdvanceX;
 
 		[Tooltip("Offest all glyphs from this font input. (default=0, 0)")]
 		public Vector2 GlyphOffset;
@@ -51,7 +51,7 @@ namespace UImGui
 		public bool MergeMode;
 
 		[Tooltip("Settings for custom font builder. THIS IS BUILDER IMPLEMENTATION DEPENDENT. Leave as zero if unsure. (default=0)")]
-		public uint FontBuilderFlags;
+		public uint FontLoaderFlags;
 
 		[Tooltip("Brighten (>1.0f) or darken (<1.0f) font output. " +
 			"Brightening small fonts may be a good workaround to make them more readable. (default=1.0f)")]
@@ -76,15 +76,15 @@ namespace UImGui
 			im.FontDataOwnedByAtlas = FontDataOwnedByAtlas;
 			im.FontNo = FontNo;
 			im.SizePixels = SizeInPixels;
-			im.OversampleH = OversampleH;
-			im.OversampleV = OversampleV;
+			im.OversampleH = (sbyte)OversampleH;
+			im.OversampleV = (sbyte)OversampleV;
 			im.PixelSnapH = PixelSnapH;
-			im.GlyphExtraSpacing = GlyphExtraSpacing;
+			im.GlyphExtraAdvanceX = GlyphExtraAdvanceX;
 			im.GlyphOffset = GlyphOffset;
 			im.GlyphMinAdvanceX = GlyphMinAdvanceX;
 			im.GlyphMaxAdvanceX = GlyphMaxAdvanceX;
 			im.MergeMode = MergeMode;
-			im.FontBuilderFlags = FontBuilderFlags;
+			im.FontLoaderFlags = FontLoaderFlags;
 			im.RasterizerMultiply = RasterizerMultiply;
 			im.EllipsisChar = EllipsisChar;
 
@@ -101,12 +101,12 @@ namespace UImGui
 			OversampleH = im.OversampleH;
 			OversampleV = im.OversampleV;
 			PixelSnapH = im.PixelSnapH;
-			GlyphExtraSpacing = im.GlyphExtraSpacing;
+			GlyphExtraAdvanceX = im.GlyphExtraAdvanceX;
 			GlyphOffset = im.GlyphOffset;
 			GlyphMinAdvanceX = im.GlyphMinAdvanceX;
 			GlyphMaxAdvanceX = im.GlyphMaxAdvanceX;
 			MergeMode = im.MergeMode;
-			FontBuilderFlags = im.FontBuilderFlags;
+			FontLoaderFlags = im.FontLoaderFlags;
 			RasterizerMultiply = im.RasterizerMultiply;
 			EllipsisChar = (char)im.EllipsisChar;
 
@@ -131,6 +131,8 @@ namespace UImGui
 				AddRangePtr(ImGuiNative.ImFontAtlas_GetGlyphRangesDefault(atlas));
 			}
 
+			// RICKY: Restore.
+			/*
 			if ((GlyphRanges & ScriptGlyphRanges.Cyrillic) != 0)
 			{
 				AddRangePtr(ImGuiNative.ImFontAtlas_GetGlyphRangesCyrillic(atlas));
@@ -165,6 +167,7 @@ namespace UImGui
 			{
 				AddRangePtr(ImGuiNative.ImFontAtlas_GetGlyphRangesChineseFull(atlas));
 			}
+			*/
 
 			if ((GlyphRanges & ScriptGlyphRanges.Custom) != 0)
 			{

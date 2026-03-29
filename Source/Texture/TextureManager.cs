@@ -25,6 +25,8 @@ namespace UImGui.Texture
 		public unsafe void Initialize(ImGuiIOPtr io)
 		{
 			ImFontAtlasPtr atlasPtr = io.Fonts;
+			
+			/*
 			atlasPtr.GetTexDataAsRGBA32(out byte* pixels, out int width, out int height, out int bytesPerPixel);
 
 			_atlasTexture = new Texture2D(width, height, TextureFormat.RGBA32, false, false)
@@ -46,6 +48,7 @@ namespace UImGui.Texture
 			}
 
 			_atlasTexture.Apply();
+			*/
 		}
 
 		public void Shutdown()
@@ -63,8 +66,8 @@ namespace UImGui.Texture
 
 		public void PrepareFrame(ImGuiIOPtr io)
 		{
-			IntPtr id = RegisterTexture(_atlasTexture);
-			io.Fonts.SetTexID(id);
+			// IntPtr id = RegisterTexture(_atlasTexture);
+			// io.Fonts.SetTexID(id);
 		}
 
 		public bool TryGetTexture(IntPtr id, out UTexture texture)
@@ -104,7 +107,7 @@ namespace UImGui.Texture
 
 		public void BuildFontAtlas(ImGuiIOPtr io, in FontAtlasConfigAsset settings, FontInitializerEvent custom)
 		{
-			if (io.Fonts.IsBuilt())
+			if (io.Fonts.TexIsBuilt)
 			{
 				DestroyFontAtlas(io);
 			}
@@ -125,7 +128,7 @@ namespace UImGui.Texture
 					io.Fonts.AddFontDefault();
 				}
 
-				io.Fonts.Build();
+				// io.Fonts.Build();
 				return;
 			}
 
@@ -158,7 +161,7 @@ namespace UImGui.Texture
 				io.Fonts.AddFontDefault();
 			}
 
-			io.Fonts.Build();
+			// io.Fonts.Build();
 		}
 
 		public unsafe void DestroyFontAtlas(ImGuiIOPtr io)

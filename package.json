@@ -4,8 +4,7 @@
   "version": "5.0.0",
   "description": "A Unity wrapper for ImGui",
   "unity": "2019.4",
-  "dependencies": {
-  },
+  "dependencies": {},
   "keywords": [
     "dear",
     "imgui",
@@ -19,5 +18,6 @@
     "type": "git",
     "url": "https://github.com/psydack/uimgui",
     "revision": ""
-  }
+  },
+  "_fingerprint": "63242adb9dc7d7772f5e3a822843060255ea0424"
 }

@@ -204,9 +204,9 @@ namespace UImGui.Renderer
 
 						if (clip.x >= fbSize.x || clip.y >= fbSize.y || clip.z < 0f || clip.w < 0f) continue;
 
-						if (prevTextureId != drawCmd.TextureId)
+						if (prevTextureId != drawCmd.TexRef._TexID)
 						{
-							prevTextureId = drawCmd.TextureId;
+							prevTextureId = drawCmd.TexRef._TexID;
 
 							// TODO: Implement ImDrawCmdPtr.GetTexID().
 							bool hasTexture = _textureManager.TryGetTexture(prevTextureId, out UnityEngine.Texture texture);

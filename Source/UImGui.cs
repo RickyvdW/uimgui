@@ -47,7 +47,6 @@ namespace UImGui
 			KeyRepeatDelay = 0.250f,
 			KeyRepeatRate = 0.050f,
 
-			FontGlobalScale = 1.0f,
 			FontAllowUserScaling = false,
 
 			DisplayFramebufferScale = Vector2.one,
