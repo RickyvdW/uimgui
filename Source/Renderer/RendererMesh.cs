@@ -208,15 +208,20 @@ namespace UImGui.Renderer
 
 						if (clip.x >= fbSize.x || clip.y >= fbSize.y || clip.z < 0f || clip.w < 0f) continue;
 
-						if (prevTextureId != drawCmd.TexRef._TexID)
+						unsafe
 						{
-							prevTextureId = drawCmd.TexRef._TexID;
+							ImTextureData data = *drawCmd.TexRef._TexData;
+							if (prevTextureId != data.TexID)
+							{
+								prevTextureId = data.TexID;
 
-							// TODO: Implement ImDrawCmdPtr.GetTexID().
-							bool hasTexture = _textureManager.TryGetTexture(prevTextureId, out UnityEngine.Texture2D texture);
-							Assert.IsTrue(hasTexture, $"Texture {prevTextureId} does not exist. Try to use UImGuiUtility.GetTextureID().");
-
-							_materialProperties.SetTexture(_textureID, texture);
+								// TODO: Implement ImDrawCmdPtr.GetTexID().
+								bool hasTexture = _textureManager.TryGetTexture(prevTextureId,
+									out UnityEngine.Texture2D texture);
+								Assert.IsTrue(hasTexture,
+									$"Texture {prevTextureId} does not exist. Try to use UImGuiUtility.GetTextureID().");
+								_materialProperties.SetTexture(_textureID, texture);
+							}
 						}
 
 						commandBuffer.EnableScissorRect(new Rect(clip.x, fbSize.y - clip.w, clip.z - clip.x, clip.w - clip.y)); // Invert y.
