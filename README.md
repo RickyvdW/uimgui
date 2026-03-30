@@ -1,6 +1,12 @@
-# UImGui fork
+# UImGui fork (2026)
 
-This is a fork of [psydack/uimgui](https://github.com/charlietran/uimgui) with updates for Unity 6's Render Graph and MacOS / Apple Silicon support. To use this with Unity 6 and URP / Render Graph:
+A fork of a fork [psydack/uimgui](https://github.com/charlietran/uimgui) with updates for ImGui **1.92.6**, ImPlot **0.17** and **docking**.
+
+**Note**: I fixed this thing up for contract work. If it doesn't work for you.. well, too bad! 🧙‍♂️
+
+---
+
+To use this with Unity 6 and URP / Render Graph:
 
 1. Add the UImGui component to your scene and tick the box for "Urp Render Graph Bypass". Set the Renderer Type to Mesh or some things like dropdown menus will not render correctly.
 2. _Do not_ add the ImGui Render Feature to your pipeline as normally instructed
@@ -16,7 +22,7 @@ UImGui (Unity ImGui) is an UPM package for the immediate mode GUI library using 
 This project is based on [RG.ImGui](https://github.com/realgamessoftware/dear-imgui-unity) project.
 This project use [FreeType](https://github.com/ocornut/imgui/tree/master/misc/freetype) as default renderer.
 
-**Using imgui 1.90.1**
+Using Dear ImGui **1.92.6** and ImPlot **0.17**.
 
 ---
 

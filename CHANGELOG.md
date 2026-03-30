@@ -1,3 +1,16 @@
+#### 5.0.1 (2026-03-29)
+
+##### New Features
+
+*  Updated to ImGui **v1.92.6** (_docking branch)
+*  Updated ImPlot to **v0.17**.
+*  Changed renderer to use new dynamic textures (ImGuiBackendFlags.RendererHasTextures).
+*  Exposed **DockBuilder** API (DockBuilderAddNode, DockBuilderFinish, etc.)
+
+##### Bug Fixes
+
+*  Fixed ImPlot crashing.
+
 #### 5.0.0 (2024-03-15)
 
 ##### New Features

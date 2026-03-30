@@ -100,9 +100,9 @@ namespace UImGui.Editor
 		private void CheckRequirements()
 		{
 			var textImGui = $"ImGUI: {ImGui.GetVersion()}";
-			var textImNodes = $"ImNodes: {(usingImNodes ? "0.4 - 2021-07-09" : "disabled")}";
-			var textImGuizmo = $"ImGuizmo: {(usingImGuizmo ? "?? - 2021-07-09" : "disabled")}";
-			var textImPlot = $"ImPlot: {(usingImPlot ? "0.10 - 2021-07-09" : "disabled")}";
+			var textImNodes = $"ImNodes: {(usingImNodes ? "0.4 - 2021-07-09" : "disabled")}"; // RICKY: To-do. Low prio library.
+			var textImGuizmo = $"ImGuizmo: {(usingImGuizmo ? "?? - 2021-07-09" : "disabled")}"; // RICKY: To-do. Low prio library.
+			var textImPlot = $"ImPlot: {(usingImPlot ? "0.17 - 2025-30-11" : "disabled")}";  // RICKY: Is this supposed to be YYYY/DD/MM? Nov 30, 2025.
 
 			EditorGUILayout.LabelField(textImGui);
 			EditorGUILayout.LabelField(textImNodes);
